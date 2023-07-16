@@ -10,15 +10,19 @@ public class UITextDialog : MonoBehaviour
 
     [Header("Assingnables")]
     public Text Text;
-    public float delay;
-    public AudioClip typeSound;
     int current;
     int max;
     AudioSource s;
-    [Header("Random Delay")]
+    [Header("Delay")]
     public bool useRandomDelay;
     public float maxDelay;
     public float minDelay;
+    public float normalDelay;
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public bool useRandomPitch;
+    public float maxPitch;
+    public float minPitch;
 
     private void Start()
     {
@@ -27,7 +31,7 @@ public class UITextDialog : MonoBehaviour
 
     public void StartDialog()
     {
-        if (!this.gameObject.GetComponent<AudioSource>()) s = this.gameObject.AddComponent<AudioSource>();
+        if (audioSource == null) audioSource = this.gameObject.AddComponent<AudioSource>();
         Text.text = "";
         current = -1;
         max = input.Length;
@@ -41,14 +45,19 @@ public class UITextDialog : MonoBehaviour
         {
             char c = input[current];
             ouput += c;
-            s.clip = typeSound;
-            s.Play(0);
+            Audio();
             Text.text = ouput;
             if (useRandomDelay)
             {
                 Invoke("DialogLoop", Random.Range(minDelay, maxDelay));
             }
-            else Invoke("DialogLoop", delay);
+            else Invoke("DialogLoop", normalDelay);
         }
+    }
+
+    public void Audio()
+    {
+        if (useRandomPitch) audioSource.pitch = Random.Range(minPitch, maxPitch);
+        audioSource.Play(0);
     }
 }
