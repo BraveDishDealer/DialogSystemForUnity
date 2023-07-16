@@ -10,8 +10,14 @@ public class TextMeshDialog : MonoBehaviour
     [Header("Assingnables")]
     public TextMesh Text;
     public float delay;
+    public AudioClip typeSound;
     int current;
     int max;
+    AudioSource s;
+    [Header("Random Delay")]
+    public bool useRandomDelay;
+    public float maxDelay;
+    public float minDelay;
 
     private void Start()
     {
@@ -20,6 +26,7 @@ public class TextMeshDialog : MonoBehaviour
 
     public void StartDialog()
     {
+        if (!this.gameObject.GetComponent<AudioSource>()) s = this.gameObject.AddComponent<AudioSource>();
         Text.text = "";
         current = -1;
         max = input.Length;
@@ -33,8 +40,14 @@ public class TextMeshDialog : MonoBehaviour
         {
             char c = input[current];
             ouput += c;
+            s.clip = typeSound;
+            s.Play(0);
             Text.text = ouput;
-            Invoke("DialogLoop", delay);
+            if (useRandomDelay)
+            {
+                Invoke("DialogLoop", Random.Range(minDelay, maxDelay));
+            }
+            else Invoke("DialogLoop", delay);
         }
     }
 }
